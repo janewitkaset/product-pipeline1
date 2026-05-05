@@ -18,21 +18,22 @@ export async function POST(req) {
             similarity_boost: 0.85,
             style: 0.28,
             use_speaker_boost: true,
-            speed: 0.95
-          }
-        })
+            speed: 0.95,
+          },
+        }),
       }
     );
 
     if (!res.ok) {
       const errText = await res.text();
-      return Response.json({ ok: false, error: errText }, { status: 400 });
+      return Response.json({ ok: false, error: `ElevenLabs error ${res.status}: ${errText}` }, { status: 400 });
     }
 
     const audioBuffer = await res.arrayBuffer();
     const base64Audio = Buffer.from(audioBuffer).toString("base64");
 
     return Response.json({ ok: true, audioBase64: base64Audio, mimeType: "audio/mpeg" });
+
   } catch (e) {
     return Response.json({ ok: false, error: e.message }, { status: 500 });
   }
